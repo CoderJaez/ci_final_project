@@ -8,3 +8,5 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 
 $routes->get('authors', 'AuthorController::index');
+
+service('auth')->routes($routes);
