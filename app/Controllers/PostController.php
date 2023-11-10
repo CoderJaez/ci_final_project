@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\HTTP\Response;
+
 class PostController extends ResourceController
 {
     /**
@@ -13,10 +14,13 @@ class PostController extends ResourceController
      */
     public function index()
     {
-        return view('posts');
+        $author = new \App\Models\Author();
+        $data['authors'] = $author->findAll();
+
+        return view('posts', $data);
     }
 
-     /**
+    /**
      * Return the properties of a resource object
      *
      * @return mixed
@@ -28,6 +32,61 @@ class PostController extends ResourceController
         return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($data);
     }
 
+    public function list()
+    {
+        $postData = $this->request->getPost();
+
+        $draw = $postData['draw'];
+        $start = $postData['start'];
+        $rowperpage = $postData['length']; // Rows display per page
+        $searchValue = $postData['search']['value'];
+        $sortby = $postData['order'][0]['column']; // Column index
+        $sortdir = $postData['order'][0]['dir']; // asc or desc
+        $sortcolumn = $postData['columns'][$sortby]['data']; // Column name 
+
+
+        $post = new \App\Models\Post();
+        $totalRecords = $post->select('id')->countAllResults();
+
+        $totalRecordswithFilter = $post->select('posts.id')
+            ->join('authors', 'authors.id = posts.author_id')
+            ->orLike('authors.last_name', $searchValue)
+            ->orLike('authors.first_name', $searchValue)
+            ->orLike('posts.title', $searchValue)
+            ->orLike('posts.description', $searchValue)
+            ->orderBy($sortcolumn, $sortdir)
+            ->countAllResults();
+
+        $records = $post->select('posts.*, CONCAT(authors.first_name, " ", authors.last_name) as author_name')
+            ->join('authors', 'authors.id = posts.author_id')
+            ->orLike('authors.last_name', $searchValue)
+            ->orLike('authors.first_name', $searchValue)
+            ->orLike('posts.title', $searchValue)
+            ->orLike('posts.description', $searchValue)
+            ->orderBy($sortcolumn, $sortdir)
+            ->findAll($rowperpage, $start);
+
+        $data = array();
+        foreach ($records as $record) {
+            $data[] = array(
+                "id" => $record['id'],
+                "author_name" => $record['author_name'],
+                "title" => $record['title'],
+                "description" => $record['description'],
+                "created_at" => $record['created_at'],
+            );
+        }
+
+        $response = array(
+            "draw" => intval($draw),
+            "recordsTotal" => $totalRecords,
+            "recordsFiltered" => $totalRecordswithFilter,
+            "data" => $data
+        );
+
+        return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
+    }
+
     /**
      * Create a new resource object, from "posted" parameters
      *
@@ -35,10 +94,12 @@ class PostController extends ResourceController
      */
     public function create()
     {
+        
         $post = new \App\Models\Post();
-        $data = $this->request->getPost();
+        $data = $this->request->getJSON();
 
-        if (!$post->validate($data)){
+
+        if (!$post->validate($data)) {
             $response = array(
                 'status' => 'error',
                 'error' => true,
@@ -47,15 +108,26 @@ class PostController extends ResourceController
 
             return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST)->setJSON($response);
         }
-
-        $post->insert($data);
-        $response = array(
-            'status' => 'success',
-            'error' => false,
-            'messages' => 'Post added successfully'
-        );
-
-        return $this->response->setStatusCode(Response::HTTP_CREATED)->setJSON($response);
+       
+        try {
+            $post->insert($data);
+            $response = array(
+                'status' => 'success',
+                'error' => false,
+                'messages' => 'Post added successfully'
+            );
+    
+            return $this->response->setStatusCode(Response::HTTP_CREATED)->setJSON($response);
+        } catch(\Exception $e) {
+            $response = array(
+                'status' => 'error',
+                'error' => true,
+                'messages' => $e->getMessage()
+            );
+    
+            return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST)->setJSON($response);
+        }
+       
     }
 
     /**
@@ -69,7 +141,7 @@ class PostController extends ResourceController
         $data = $this->request->getJSON();
         unset($data->id);
 
-        if (!$post->validate($data)){
+        if (!$post->validate($data)) {
             $response = array(
                 'status' => 'error',
                 'error' => true,
@@ -98,7 +170,7 @@ class PostController extends ResourceController
     {
         $post = new \App\Models\Post();
 
-        if ($post->delete($id)){
+        if ($post->delete($id)) {
             $response = array(
                 'status' => 'success',
                 'error' => false,
@@ -115,6 +187,5 @@ class PostController extends ResourceController
         );
 
         return $this->response->setStatusCode(Response::HTTP_NOT_FOUND)->setJSON($response);
-        
     }
 }

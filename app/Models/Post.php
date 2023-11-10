@@ -26,7 +26,7 @@ class Post extends Model
         'author_id' => 'required|integer',
         'title' => 'required|min_length[3]|max_length[255]',
         'description' => 'required|min_length[3]|max_length[255]',
-        'content' => 'required|min_length[3]|max_length[255]',
+        'content' => 'required',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
