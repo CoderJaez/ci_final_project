@@ -13,7 +13,7 @@ class AuthorController extends ResourceController
      */
     public function index()
     {
-        //
+        return view('authors');
     }
 
     /**
