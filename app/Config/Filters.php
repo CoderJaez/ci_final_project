@@ -26,7 +26,7 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'groupfilter'   => \CodeIgniter\Shield\Filters\GroupFilter::class,
-        
+        'auth'          => \App\Filters\Auth::class,
     ];
 
     /**

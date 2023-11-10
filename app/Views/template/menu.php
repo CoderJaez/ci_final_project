@@ -9,7 +9,11 @@
 
      <!-- Right navbar links -->
      <ul class="navbar-nav ml-auto">
-
+         <li class="nav-item">
+             <a class="nav-link" href="<?= base_url() ?>logout" role="button">
+                 <i class="fas fa-sign-out-alt"></i>
+             </a>
+         </li>
 
      </ul>
  </nav>
@@ -40,25 +44,27 @@
              <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                  <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-                <li class="nav-header">TRANSACTIONS</li>
-                <li class="nav-item">
-                     <a href="<?= base_url()?>dashboard" class="nav-link">
+                 <li class="nav-header">TRANSACTIONS</li>
+                 <li class="nav-item">
+                     <a href="<?= base_url() ?>dashboard" class="nav-link">
                          <i class="fas fa-rocket nav-icon"></i>
                          <p>Dashboard</p>
                      </a>
-                </li>
-                <li class="nav-item">
-                     <a href="<?= base_url()?>authors" class="nav-link">
+                 </li>
+                 <?php if (auth()->user()->inGroup('admin')) : ?>
+                 <li class="nav-item">
+                     <a href="<?= base_url() ?>authors" class="nav-link">
                          <i class="fas fa-user nav-icon"></i>
                          <p>Authors</p>
                      </a>
-                </li>
-                <li class="nav-item">
-                     <a href="<?= base_url()?>posts" class="nav-link">
+                 </li>
+                 <?php endif; ?>
+                 <li class="nav-item">
+                     <a href="<?= base_url() ?>posts" class="nav-link">
                          <i class="fas fa-list nav-icon"></i>
                          <p>Posts</p>
                      </a>
-                </li>
+                 </li>
 
              </ul>
          </nav>
