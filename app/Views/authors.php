@@ -45,6 +45,7 @@
                     <div class="modal-body">
                         <form class="needs-validation" novalidate>
                             <div class="card-body">
+                                <input type="hidden" id="id" name="id">
                                 <div class="form-group">
                                     <label for="first_name">First Name</label>
                                     <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
@@ -118,35 +119,67 @@
             let jsondata = JSON.stringify(formdata);
 
             if (this.checkValidity()) {
-                $.ajax({
-                    url: "<?= base_url('authors'); ?>",
-                    type: "POST",
-                    data: jsondata,
-                    dataType: "json",
-                    success: function(data) {
-                        $(document).Toasts('create', {
-                            class: 'bg-success',
-                            title: 'Success',
-                            subtitle: 'Author',
-                            body: 'Record successfully added.',
-                            autohide: true,
-                            delay: 3000
-                        });
-                        $("#modalID").modal("hide");
-                        table.ajax.reload();
-                    },
-                    error: function(result) {
-                        $(document).Toasts('create', {
-                            class: 'bg-danger',
-                            title: 'Error',
-                            subtitle: 'Author',
-                            body: 'Record not added.',
-                            autohide: true,
-                            delay: 3000
-                        });
-                    }
-                });
+                if (!formdata.id) {
+                    $.ajax({
+                        url: "<?= base_url('authors'); ?>",
+                        type: "POST",
+                        data: jsondata,
+                        success: function(data) {
+                            $(document).Toasts('create', {
+                                class: 'bg-success',
+                                title: 'Success',
+                                subtitle: 'Author',
+                                body: 'Record successfully added.',
+                                autohide: true,
+                                delay: 3000
+                            });
+                            $("#modalID").modal("hide");
+                            clearform();
+                            table.ajax.reload();
+                        },
+                        error: function(result) {
+                            $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: 'Error',
+                                subtitle: 'Author',
+                                body: 'Record not added.',
+                                autohide: true,
+                                delay: 3000
+                            });
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        url: "<?= base_url('authors'); ?>/"+formdata.id,
+                        type: "PUT",
+                        data: jsondata,
+                        success: function(data) {
+                            $(document).Toasts('create', {
+                                class: 'bg-success',
+                                title: 'Success',
+                                subtitle: 'Author',
+                                body: 'Record successfully udpated.',
+                                autohide: true,
+                                delay: 3000
+                            });
+                            $("#modalID").modal("hide");
+                            clearform();
+                            table.ajax.reload();
+                        },
+                        error: function(result) {
+                            $(document).Toasts('create', {
+                                class: 'bg-danger',
+                                title: 'Error',
+                                subtitle: 'Author',
+                                body: 'Record not updated.',
+                                autohide: true,
+                                delay: 3000
+                            });
+                        }
+                    });
+                }
             }
+
 
 
         });
@@ -194,19 +227,55 @@
 
     });
 
-    $(document).ready(function(){
+    $(document).on("click", "#editRow", function() {
+        let row = $(this).parents("tr")[0];
+        let id = table.row(row).data().id;
+
+        $.ajax({
+            url: "<?= base_url('authors'); ?>/" + id,
+            type: "GET",
+            success: function(data) {
+                $("#modalID").modal("show");
+                $("#id").val(data.id);
+                $("#first_name").val(data.first_name);
+                $("#last_name").val(data.last_name);
+                $("#email").val(data.email);
+                $("#birthdate").val(data.birthdate);
+            },
+            error: function(result) {
+                $(document).Toasts('create', {
+                    class: 'bg-danger',
+                    title: 'Error',
+                    subtitle: 'Author',
+                    body: 'Record not found.',
+                    autohide: true,
+                    delay: 3000
+                });
+            }
+        });
+    });
+
+    function clearform() {
+        $("#id").val("");
+        $("#first_name").val("");
+        $("#last_name").val("");
+        $("#email").val("");
+        $("#birthdate").val("");
+    }
+
+    $(document).ready(function() {
         'use strict';
 
         let form = $(".needs-validation");
 
-        form.each(function(){
+        form.each(function() {
             $(this).on('submit', function(event) {
                 if (this.checkValidity() === false) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
                 $(this).addClass('was-validated');
-            }); 
+            });
         });
     });
 </script>

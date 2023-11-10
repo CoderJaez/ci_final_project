@@ -4,9 +4,10 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\HTTP\Response;
+
 class AuthorController extends ResourceController
 {
-     /**
+    /**
      * Return an array of resource objects, themselves in array format
      *
      * @return mixed
@@ -28,7 +29,8 @@ class AuthorController extends ResourceController
         return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($data);
     }
 
-    public function list(){
+    public function list()
+    {
         $postData = $this->request->getPost();
 
         $draw = $postData['draw'];
@@ -44,18 +46,18 @@ class AuthorController extends ResourceController
         $totalRecords = $author->select('id')->countAllResults();
 
         $totalRecordswithFilter = $author->select('id')
-        ->orLike('last_name', $searchValue)
-        ->orLike('first_name', $searchValue)
-        ->orLike('email', $searchValue)
-        ->orderBy($sortcolumn, $sortdir)
-        ->countAllResults();
+            ->orLike('last_name', $searchValue)
+            ->orLike('first_name', $searchValue)
+            ->orLike('email', $searchValue)
+            ->orderBy($sortcolumn, $sortdir)
+            ->countAllResults();
 
         $records = $author->select('*')
-        ->orLike('last_name', $searchValue)
-        ->orLike('first_name', $searchValue)
-        ->orLike('email', $searchValue)
-        ->orderBy($sortcolumn, $sortdir)
-        ->findAll($rowperpage, $start);
+            ->orLike('last_name', $searchValue)
+            ->orLike('first_name', $searchValue)
+            ->orLike('email', $searchValue)
+            ->orderBy($sortcolumn, $sortdir)
+            ->findAll($rowperpage, $start);
 
         $data = array();
         foreach ($records as $record) {
@@ -76,7 +78,6 @@ class AuthorController extends ResourceController
         );
 
         return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
-
     }
 
     /**
@@ -89,7 +90,7 @@ class AuthorController extends ResourceController
         $author = new \App\Models\Author();
         $data = $this->request->getJSON();
 
-        if (!$author->validate($data)){
+        if (!$author->validate($data)) {
             $response = array(
                 'status' => 'error',
                 'error' => true,
@@ -119,8 +120,9 @@ class AuthorController extends ResourceController
         $author = new \App\Models\Author();
         $data = $this->request->getJSON();
         unset($data->id);
+        unset($data->email);
 
-        if (!$author->validate($data)){
+        if (!$author->validate($data)) {
             $response = array(
                 'status' => 'error',
                 'error' => true,
@@ -129,7 +131,7 @@ class AuthorController extends ResourceController
 
             return $this->response->setStatusCode(Response::HTTP_NOT_MODIFIED)->setJSON($response);
         }
-
+ 
         $author->update($id, $data);
         $response = array(
             'status' => 'success',
@@ -149,7 +151,7 @@ class AuthorController extends ResourceController
     {
         $author = new \App\Models\Author();
 
-        if ($author->delete($id)){
+        if ($author->delete($id)) {
             $response = array(
                 'status' => 'success',
                 'error' => false,
@@ -166,6 +168,5 @@ class AuthorController extends ResourceController
         );
 
         return $this->response->setStatusCode(Response::HTTP_NOT_FOUND)->setJSON($response);
-        
     }
 }
