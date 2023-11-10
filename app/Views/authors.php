@@ -32,6 +32,69 @@
                 </tr>
             </thead>
         </table>
+
+        <div class="modal fade" id="modalID" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Author Details</h5>
+                        <buton type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </buton>
+                    </div>
+                    <div class="modal-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="first_name">First Name</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please enter a valid first name.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="last_name">Last Name</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name">
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please enter a valid last name.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please enter a valid email.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="birthdate">Birth Date</label>
+                                    <div class="input-group date" id="birthdatepicker" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input" id="birthdate" name="birthdate" data-target="#birthdatepicker">
+                                        <div class="input-group-append" data-target="#birthdatepicker" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -39,6 +102,57 @@
 
 <?= $this->section('pagescripts'); ?>
 <script>
+    $(function() {
+        $('#birthdatepicker').datetimepicker({
+            format: 'YYYY-MM-DD'
+        });
+
+        $("form").submit(function(event) {
+            event.preventDefault();
+
+            let formdata = $(this).serializeArray().reduce(function(obj, item) {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+
+            let jsondata = JSON.stringify(formdata);
+
+            if (this.checkValidity()) {
+                $.ajax({
+                    url: "<?= base_url('authors'); ?>",
+                    type: "POST",
+                    data: jsondata,
+                    dataType: "json",
+                    success: function(data) {
+                        $(document).Toasts('create', {
+                            class: 'bg-success',
+                            title: 'Success',
+                            subtitle: 'Author',
+                            body: 'Record successfully added.',
+                            autohide: true,
+                            delay: 3000
+                        });
+                        $("#modalID").modal("hide");
+                        table.ajax.reload();
+                    },
+                    error: function(result) {
+                        $(document).Toasts('create', {
+                            class: 'bg-danger',
+                            title: 'Error',
+                            subtitle: 'Author',
+                            body: 'Record not added.',
+                            autohide: true,
+                            delay: 3000
+                        });
+                    }
+                });
+            }
+
+
+        });
+    });
+
+
     let table = $("#dataTable").DataTable({
         responsive: true,
         processing: true,
@@ -78,6 +192,22 @@
         autoWidth: true,
         lengthMenu: [5, 10, 20, 50]
 
+    });
+
+    $(document).ready(function(){
+        'use strict';
+
+        let form = $(".needs-validation");
+
+        form.each(function(){
+            $(this).on('submit', function(event) {
+                if (this.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                $(this).addClass('was-validated');
+            }); 
+        });
     });
 </script>
 <?= $this->endSection(); ?>

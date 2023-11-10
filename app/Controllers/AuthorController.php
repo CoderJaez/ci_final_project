@@ -87,7 +87,7 @@ class AuthorController extends ResourceController
     public function create()
     {
         $author = new \App\Models\Author();
-        $data = $this->request->getPost();
+        $data = $this->request->getJSON();
 
         if (!$author->validate($data)){
             $response = array(
