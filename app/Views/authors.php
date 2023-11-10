@@ -150,7 +150,7 @@
                     });
                 } else {
                     $.ajax({
-                        url: "<?= base_url('authors'); ?>/"+formdata.id,
+                        url: "<?= base_url('authors'); ?>/" + formdata.id,
                         type: "PUT",
                         data: jsondata,
                         success: function(data) {
@@ -179,9 +179,6 @@
                     });
                 }
             }
-
-
-
         });
     });
 
@@ -212,8 +209,8 @@
             {
                 data: '',
                 defaultContent: `<td>
-            <button class="btn btn-primary btn-sm" id="editRow">Edit</button>
-            <button class="btn btn-primary btn-sm" id="deleteRow">Delete</button>
+            <button class="btn btn-warning btn-sm" id="editRow">Edit</button>
+            <button class="btn btn-danger btn-sm" id="deleteRow">Delete</button>
             </td>`
             }
         ],
@@ -253,6 +250,39 @@
                 });
             }
         });
+    });
+
+    $(document).on("click", "#deleteRow", function() {
+        let row = $(this).parents("tr")[0];
+        let id = table.row(row).data().id;
+
+        if (confirm("Are you sure you want to delete this record?")) {
+            $.ajax({
+                url: "<?= base_url('authors'); ?>/" + id,
+                type: "DELETE",
+                success: function(data) {
+                    $(document).Toasts('create', {
+                        class: 'bg-success',
+                        title: 'Success',
+                        subtitle: 'Author',
+                        body: 'Record was deleted.',
+                        autohide: true,
+                        delay: 3000
+                    });
+                    table.ajax.reload();
+                },
+                error: function(result) {
+                    $(document).Toasts('create', {
+                        class: 'bg-danger',
+                        title: 'Error',
+                        subtitle: 'Author',
+                        body: 'Record not found.',
+                        autohide: true,
+                        delay: 3000
+                    });
+                }
+            });
+        }
     });
 
     function clearform() {

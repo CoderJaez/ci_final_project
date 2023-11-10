@@ -128,11 +128,11 @@ class AuthorController extends ResourceController
                 'error' => true,
                 'messages' => $author->errors()
             );
-
-            return $this->response->setStatusCode(Response::HTTP_NOT_MODIFIED)->setJSON($response);
+            return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST)->setJSON($response);
         }
- 
+
         $author->update($id, $data);
+
         $response = array(
             'status' => 'success',
             'error' => false,
@@ -149,6 +149,7 @@ class AuthorController extends ResourceController
      */
     public function delete($id = null)
     {
+
         $author = new \App\Models\Author();
 
         if ($author->delete($id)) {
