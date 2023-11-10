@@ -23,6 +23,8 @@
     <!-- ./wrapper -->
 
     <?php include 'scripts.php'; ?>
+
+    <?= $this->renderSection('pagescripts'); ?>
 </body>
 
 </html>

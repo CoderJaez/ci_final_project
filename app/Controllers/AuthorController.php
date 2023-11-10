@@ -28,6 +28,57 @@ class AuthorController extends ResourceController
         return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($data);
     }
 
+    public function list(){
+        $postData = $this->request->getPost();
+
+        $draw = $postData['draw'];
+        $start = $postData['start'];
+        $rowperpage = $postData['length']; // Rows display per page
+        $searchValue = $postData['search']['value'];
+        $sortby = $postData['order'][0]['column']; // Column index
+        $sortdir = $postData['order'][0]['dir']; // asc or desc
+        $sortcolumn = $postData['columns'][$sortby]['data']; // Column name 
+
+
+        $author = new \App\Models\Author();
+        $totalRecords = $author->select('id')->countAllResults();
+
+        $totalRecordswithFilter = $author->select('id')
+        ->orLike('last_name', $searchValue)
+        ->orLike('first_name', $searchValue)
+        ->orLike('email', $searchValue)
+        ->orderBy($sortcolumn, $sortdir)
+        ->countAllResults();
+
+        $records = $author->select('*')
+        ->orLike('last_name', $searchValue)
+        ->orLike('first_name', $searchValue)
+        ->orLike('email', $searchValue)
+        ->orderBy($sortcolumn, $sortdir)
+        ->findAll($rowperpage, $start);
+
+        $data = array();
+        foreach ($records as $record) {
+            $data[] = array(
+                "id" => $record['id'],
+                "last_name" => $record['last_name'],
+                "first_name" => $record['first_name'],
+                "email" => $record['email'],
+                "birthdate" => $record['birthdate'],
+            );
+        }
+
+        $response = array(
+            "draw" => intval($draw),
+            "recordsTotal" => $totalRecords,
+            "recordsFiltered" => $totalRecordswithFilter,
+            "data" => $data
+        );
+
+        return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
+
+    }
+
     /**
      * Create a new resource object, from "posted" parameters
      *
