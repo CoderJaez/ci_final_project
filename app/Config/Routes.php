@@ -14,6 +14,6 @@ $routes->set404Override();
 
 
 $routes->resource('authors', ['controller' => 'AuthorController', 'except' => ['new', 'edit']]);
-
+$routes->resource('posts', ['controller' => 'PostController', 'except' => ['new', 'edit']]);
 
 service('auth')->routes($routes);

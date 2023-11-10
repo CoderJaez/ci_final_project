@@ -12,17 +12,22 @@ class Post extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = ['author_id','title','description','content'];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
+    protected $validationRules      = [
+        'author_id' => 'required|integer',
+        'title' => 'required|min_length[3]|max_length[255]',
+        'description' => 'required|min_length[3]|max_length[255]',
+        'content' => 'required|min_length[3]|max_length[255]',
+    ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
@@ -37,4 +42,14 @@ class Post extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    //Relationships/Association
+    protected $returnTypeRelations = 'array';
+    protected $belongsTo =[
+        'author' => [
+            'model' => 'App\Models\Author',
+            'foreign_key' => 'author_id',
+            'local_key' => 'id'
+        ],
+    ];
 }

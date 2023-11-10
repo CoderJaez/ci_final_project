@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
-
+use CodeIgniter\HTTP\Response;
 class PostController extends ResourceController
 {
     /**
@@ -16,24 +16,16 @@ class PostController extends ResourceController
         //
     }
 
-    /**
+     /**
      * Return the properties of a resource object
      *
      * @return mixed
      */
     public function show($id = null)
     {
-        //
-    }
-
-    /**
-     * Return a new resource object, with default properties
-     *
-     * @return mixed
-     */
-    public function new()
-    {
-        //
+        $post = new \App\Models\Post();
+        $data = $post->find($id);
+        return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($data);
     }
 
     /**
@@ -43,17 +35,27 @@ class PostController extends ResourceController
      */
     public function create()
     {
-        //
-    }
+        $post = new \App\Models\Post();
+        $data = $this->request->getPost();
 
-    /**
-     * Return the editable properties of a resource object
-     *
-     * @return mixed
-     */
-    public function edit($id = null)
-    {
-        //
+        if (!$post->validate($data)){
+            $response = array(
+                'status' => 'error',
+                'error' => true,
+                'messages' => $post->errors()
+            );
+
+            return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST)->setJSON($response);
+        }
+
+        $post->insert($data);
+        $response = array(
+            'status' => 'success',
+            'error' => false,
+            'messages' => 'Post added successfully'
+        );
+
+        return $this->response->setStatusCode(Response::HTTP_CREATED)->setJSON($response);
     }
 
     /**
@@ -63,7 +65,28 @@ class PostController extends ResourceController
      */
     public function update($id = null)
     {
-        //
+        $post = new \App\Models\Post();
+        $data = $this->request->getJSON();
+        unset($data->id);
+
+        if (!$post->validate($data)){
+            $response = array(
+                'status' => 'error',
+                'error' => true,
+                'messages' => $post->errors()
+            );
+
+            return $this->response->setStatusCode(Response::HTTP_NOT_MODIFIED)->setJSON($response);
+        }
+
+        $post->update($id, $data);
+        $response = array(
+            'status' => 'success',
+            'error' => false,
+            'messages' => 'Post updated successfully'
+        );
+
+        return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
     }
 
     /**
@@ -73,6 +96,25 @@ class PostController extends ResourceController
      */
     public function delete($id = null)
     {
-        //
+        $post = new \App\Models\Post();
+
+        if ($post->delete($id)){
+            $response = array(
+                'status' => 'success',
+                'error' => false,
+                'messages' => 'Post deleted successfully'
+            );
+
+            return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
+        }
+
+        $response = array(
+            'status' => 'error',
+            'error' => true,
+            'messages' => 'Post not found'
+        );
+
+        return $this->response->setStatusCode(Response::HTTP_NOT_FOUND)->setJSON($response);
+        
     }
 }
