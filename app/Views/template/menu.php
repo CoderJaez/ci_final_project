@@ -52,17 +52,35 @@
                      </a>
                  </li>
                  <?php if (auth()->user()->inGroup('admin')) : ?>
-                 <li class="nav-item">
-                     <a href="<?= base_url() ?>authors" class="nav-link">
-                         <i class="fas fa-user nav-icon"></i>
-                         <p>Authors</p>
-                     </a>
-                 </li>
+                     <li class="nav-item">
+                         <a href="<?= base_url() ?>authors" class="nav-link">
+                             <i class="fas fa-user nav-icon"></i>
+                             <p>Authors</p>
+                         </a>
+                     </li>
+                     <li class="nav-item">
+                         <a href="<?= base_url() ?>offices" class="nav-link">
+                             <i class="fas fa-user nav-icon"></i>
+                             <p>Offices</p>
+                         </a>
+                     </li>
                  <?php endif; ?>
                  <li class="nav-item">
                      <a href="<?= base_url() ?>posts" class="nav-link">
                          <i class="fas fa-list nav-icon"></i>
                          <p>Posts</p>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a href="<?= base_url("users") ?>" class="nav-link">
+                         <i class="fas fa-list nav-icon"></i>
+                         <p>User Management</p>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a href="<?= base_url() ?>permissions" class="nav-link">
+                         <i class="fas fa-list nav-icon"></i>
+                         <p>Role Management</p>
                      </a>
                  </li>
 

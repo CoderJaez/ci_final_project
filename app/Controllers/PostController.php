@@ -16,7 +16,10 @@ class PostController extends ResourceController
     {
         $author = new \App\Models\Author();
         $data['authors'] = $author->findAll();
-
+        echo '<pre>';
+        var_dump(auth()->user()->inGroup('admin'));
+        echo '</pre>';
+        die();
         return view('posts', $data);
     }
 
@@ -94,7 +97,7 @@ class PostController extends ResourceController
      */
     public function create()
     {
-        
+
         $post = new \App\Models\Post();
         $data = $this->request->getJSON();
 
@@ -108,7 +111,7 @@ class PostController extends ResourceController
 
             return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST)->setJSON($response);
         }
-       
+
         try {
             $post->insert($data);
             $response = array(
@@ -116,18 +119,17 @@ class PostController extends ResourceController
                 'error' => false,
                 'messages' => 'Post added successfully'
             );
-    
+
             return $this->response->setStatusCode(Response::HTTP_CREATED)->setJSON($response);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $response = array(
                 'status' => 'error',
                 'error' => true,
                 'messages' => $e->getMessage()
             );
-    
+
             return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST)->setJSON($response);
         }
-       
     }
 
     /**

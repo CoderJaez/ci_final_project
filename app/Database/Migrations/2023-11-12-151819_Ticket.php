@@ -1,39 +1,45 @@
-
 <?php
 
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class Post extends Migration
+class Ticket extends Migration
 {
     public function up()
     {
         $fields = [
-            'id' => [
+            'id' =>
+            [
+                'type' => 'INT',
+                'null' => false,
+                'constraint' => 11,
+                'auto_increment' => true
+            ],
+            'user_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
-                'auto_increment' => true,
+                'unsigned' => true,
                 'null' => false,
             ],
-            'author_id' => [
+            'severity_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'null' => false,
             ],
-            'title' => [
+            'status' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => 50,
                 'null' => false,
             ],
+            'remarks' => [
+                'type' => 'VARCHAR',
+                'constraint' => 250,
+            ],
+
             'description' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
-                'null' => false,
-            ],
-            'content' => [
-                'type' => 'TEXT',
-                'null' => false,
+                'constraint' => 250,
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -43,17 +49,17 @@ class Post extends Migration
                 'type' => 'DATETIME',
                 'null' => true,
             ],
-        ];
 
+        ];
         $this->forge->addField($fields);
         $this->forge->addPrimaryKey('id');
-        $this->forge->addForeignKey('author_id', 'authors', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->createTable('posts');
-
+        $this->forge->addForeignKey('severity_id', 'severities', 'id', 'cascade', 'cascade');
+        $this->forge->addForeignKey('user_id', 'users', 'id', 'cascade', 'cascade');
+        $this->forge->createTable('tickets');
     }
 
     public function down()
     {
-        $this->forge->dropTable('posts');
+        $this->forge->dropTable("tickets");
     }
 }
