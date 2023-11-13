@@ -16,10 +16,7 @@ class PostController extends ResourceController
     {
         $author = new \App\Models\Author();
         $data['authors'] = $author->findAll();
-        echo '<pre>';
-        var_dump(auth()->user()->inGroup('admin'));
-        echo '</pre>';
-        die();
+
         return view('posts', $data);
     }
 

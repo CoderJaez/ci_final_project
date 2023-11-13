@@ -56,6 +56,9 @@ class OfficeController extends ResourceController
      */
     public function show($id = null)
     {
+        $office = new OfficeModel();
+        $data = $office->find($id);
+        return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($data);
     }
 
     public function list()

@@ -18,6 +18,7 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalID">
                     Add Post
                 </button>
+
             </div>
         </div>
         <table id="dataTable" class="table table-bordered table-striped">
@@ -304,6 +305,7 @@
 
         form.each(function() {
             $(this).on('submit', function(event) {
+                console.log(this.checkValidity())
                 if (this.checkValidity() === false) {
                     event.preventDefault();
                     event.stopPropagation();

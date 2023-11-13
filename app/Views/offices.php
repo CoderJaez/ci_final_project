@@ -45,44 +45,27 @@
                             <div class="card-body">
                                 <input type="hidden" id="id" name="id">
                                 <div class="form-group">
-                                    <label for="first_name">First Name</label>
-                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
+                                    <label for="code">Code</label>
+                                    <input type="text" class="form-control" id="code" name="code" placeholder="Enter Code" required>
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>
                                     <div class="invalid-feedback">
-                                        Please enter a valid first name.
+                                        Please enter a valid code.
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Office Name" required>
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>
                                     <div class="invalid-feedback">
-                                        Please enter a valid last name.
+                                        Please enter a valid office name.
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
-                                    <div class="valid-feedback">
-                                        Looks good!
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        Please enter a valid email.
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="birthdate">Birth Date</label>
-                                    <div class="input-group date" id="birthdatepicker" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="birthdate" name="birthdate" data-target="#birthdatepicker">
-                                        <div class="input-group-append" data-target="#birthdatepicker" data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                        </div>
-                                    </div>
-                                </div>
+
+
                             </div>
 
                             <div class="card-footer">
@@ -102,9 +85,6 @@
 <?= $this->section('pagescripts'); ?>
 <script>
     $(function() {
-        $('#birthdatepicker').datetimepicker({
-            format: 'YYYY-MM-DD'
-        });
 
         $("form").submit(function(event) {
             event.preventDefault();
@@ -115,18 +95,18 @@
             }, {});
 
             let jsondata = JSON.stringify(formdata);
-
+            console.log(this.checkValidity())
             if (this.checkValidity()) {
                 if (!formdata.id) {
                     $.ajax({
-                        url: "<?= base_url('authors'); ?>",
+                        url: "<?= base_url('offices'); ?>",
                         type: "POST",
                         data: jsondata,
                         success: function(data) {
                             $(document).Toasts('create', {
                                 class: 'bg-success',
                                 title: 'Success',
-                                subtitle: 'Author',
+                                subtitle: 'Office',
                                 body: 'Record successfully added.',
                                 autohide: true,
                                 delay: 3000
@@ -136,10 +116,11 @@
                             table.ajax.reload();
                         },
                         error: function(result) {
+                            console.log(result.responseJSON.messages)
                             $(document).Toasts('create', {
                                 class: 'bg-danger',
                                 title: 'Error',
-                                subtitle: 'Author',
+                                subtitle: 'Office',
                                 body: 'Record not added.',
                                 autohide: true,
                                 delay: 3000
@@ -148,7 +129,7 @@
                     });
                 } else {
                     $.ajax({
-                        url: "<?= base_url('authors'); ?>/" + formdata.id,
+                        url: "<?= base_url('offices'); ?>/" + formdata.id,
                         type: "PUT",
                         data: jsondata,
                         success: function(data) {
@@ -168,7 +149,7 @@
                             $(document).Toasts('create', {
                                 class: 'bg-danger',
                                 title: 'Error',
-                                subtitle: 'Author',
+                                subtitle: 'Office',
                                 body: 'Record not updated.',
                                 autohide: true,
                                 delay: 3000
@@ -186,24 +167,19 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "<?= base_url('authors/list'); ?>",
+            url: "<?= base_url('offices/list'); ?>",
             type: "POST"
         },
         columns: [{
                 data: "id",
             },
             {
-                data: 'last_name',
+                data: 'code',
             },
             {
-                data: 'first_name',
+                data: 'name',
             },
-            {
-                data: 'email',
-            },
-            {
-                data: 'birthdate',
-            },
+
             {
                 data: '',
                 defaultContent: `<td>
@@ -227,15 +203,14 @@
         let id = table.row(row).data().id;
 
         $.ajax({
-            url: "<?= base_url('authors'); ?>/" + id,
+            url: "<?= base_url('offices'); ?>/" + id,
             type: "GET",
             success: function(data) {
+                console.log(data)
                 $("#modalID").modal("show");
                 $("#id").val(data.id);
-                $("#first_name").val(data.first_name);
-                $("#last_name").val(data.last_name);
-                $("#email").val(data.email);
-                $("#birthdate").val(data.birthdate);
+                $("#code").val(data.code);
+                $("#name").val(data.name);
             },
             error: function(result) {
                 $(document).Toasts('create', {
