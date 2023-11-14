@@ -47,7 +47,7 @@
 
                  <?php if (auth()->user()->inGroup('user')) : ?>
                      <li class="nav-item">
-                         <a href="<?= base_url() ?>dashboard" class="nav-link">
+                         <a href="<?= base_url("tickets") ?>?" class="nav-link">
                              <i class="fas fa-headphones nav-icon"></i>
                              <p>Support tickets</p>
                          </a>
@@ -59,6 +59,12 @@
                          <a href="<?= base_url() ?>dashboard" class="nav-link">
                              <i class="fas fa-rocket nav-icon"></i>
                              <p>Dashboard</p>
+                         </a>
+                     </li>
+                     <li class="nav-item">
+                         <a href="<?= base_url("tickets") ?>?" class="nav-link">
+                             <i class="fas fa-headphones nav-icon"></i>
+                             <p>Support tickets</p>
                          </a>
                      </li>
 

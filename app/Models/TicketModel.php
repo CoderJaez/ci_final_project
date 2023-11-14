@@ -4,18 +4,21 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class Post extends Model
+
+
+
+class TicketModel extends Model
 {
-    protected $table            = 'posts';
+    protected $table            = 'tickets';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['author_id','title','description','content'];
+    protected $allowedFields    = ['user_id', 'severity_id', 'office_id', 'status', 'remarks', 'description'];
 
     // Dates
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
@@ -23,10 +26,10 @@ class Post extends Model
 
     // Validation
     protected $validationRules      = [
-        'author_id' => 'required|integer',
-        'title' => 'required|min_length[3]|max_length[255]',
-        'description' => 'required|min_length[3]|max_length[255]',
-        'content' => 'required',
+        'user_id' => 'required',
+        'severity_id' => 'required',
+        'office_id' => 'required',
+        'description' => 'required|min_length[5]',
     ];
     protected $validationMessages   = [];
     protected $skipValidation       = false;
@@ -45,12 +48,24 @@ class Post extends Model
 
     //Relationships/Association
     protected $returnTypeRelations = 'array';
-    protected $belongsTo =[
-        'author' => [
-            'model' => 'App\Models\Author',
-            'foreign_key' => 'author_id',
+    protected $belongsTo = [
+        'auth_identities' => [
+            'model' => 'CodeIgniter\Shield\Models\UserIdentityModel',
+            'foreign_key' => 'user_id',
+            'local_key' => 'user_id'
+        ],
+        'offices' => [
+
+            'model' => OfficeModel::class,
+            'foreign_key' => 'office_id',
             'local_key' => 'id'
         ],
+
+        'severities' => [
+            'model' => SeverityModel::class,
+            'foreign_key' => 'severity_id',
+            'local_key' => 'id'
+
+        ],
     ];
-    
 }

@@ -30,6 +30,7 @@ class Ticket extends Migration
             'status' => [
                 'type' => 'VARCHAR',
                 'constraint' => 50,
+                'default' => 'PENDING',
                 'null' => false,
             ],
             'remarks' => [
