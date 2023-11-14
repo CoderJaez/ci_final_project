@@ -46,8 +46,9 @@
                             <div class="card-body">
                                 <input type="hidden" id="id" name="id">
                                 <div class="form-group">
-                                    <label for="first_name">Username</label>
-                                    <input type="text" class="form-control" id="first_name" name="username" placeholder="Enter First Name">
+                                    <label for="name">Full Name</label>
+
+                                    <input readonly type="text" class="form-control" id="name" name="name" placeholder="Enter FullName">
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>
@@ -55,19 +56,10 @@
                                         Please enter a valid first name.
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="last_name">Last Name</label>
-                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Last Name">
-                                    <div class="valid-feedback">
-                                        Looks good!
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        Please enter a valid last name.
-                                    </div>
-                                </div>
+
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
+                                    <input readonly type="email" class="form-control" id="email" name="email" placeholder="Enter Email">
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>
@@ -75,15 +67,21 @@
                                         Please enter a valid email.
                                     </div>
                                 </div>
+
                                 <div class="form-group">
-                                    <label for="birthdate">Birth Date</label>
-                                    <div class="input-group date" id="birthdatepicker" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" id="birthdate" name="birthdate" data-target="#birthdatepicker">
-                                        <div class="input-group-append" data-target="#birthdatepicker" data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                        </div>
+                                    <label for="email">Role</label>
+                                    <select name="group" id="group" class="form-control" required>
+                                        <option value="admin">Admin</option>
+                                        <option value="user">User</option>
+                                    </select>
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please enter a valid role.
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="card-footer">
@@ -103,9 +101,6 @@
 <?= $this->section('pagescripts'); ?>
 <script>
     $(function() {
-        $('#birthdatepicker').datetimepicker({
-            format: 'YYYY-MM-DD'
-        });
 
         $("form").submit(function(event) {
             event.preventDefault();
@@ -166,6 +161,7 @@
                             table.ajax.reload();
                         },
                         error: function(result) {
+                            console.log(result)
                             $(document).Toasts('create', {
                                 class: 'bg-danger',
                                 title: 'Error',
@@ -223,18 +219,17 @@
 
     $(document).on("click", "#editRow", function() {
         let row = $(this).parents("tr")[0];
-        let id = table.row(row).data().id;
+        let id = table.row(row).data().user_id;
 
         $.ajax({
             url: "<?= base_url('users'); ?>/" + id,
             type: "GET",
             success: function(data) {
                 $("#modalID").modal("show");
-                $("#id").val(data.id);
-                $("#first_name").val(data.first_name);
-                $("#last_name").val(data.last_name);
+                $("#id").val(data.user_id);
+                $("#name").val(data.name);
                 $("#email").val(data.email);
-                $("#birthdate").val(data.birthdate);
+                $("#group").val(data.group);
             },
             error: function(result) {
                 $(document).Toasts('create', {
@@ -251,7 +246,8 @@
 
     $(document).on("click", "#deleteRow", function() {
         let row = $(this).parents("tr")[0];
-        let id = table.row(row).data().id;
+        let id = table.row(row).data().user_id;
+
 
         if (confirm("Are you sure you want to delete this record?")) {
             $.ajax({

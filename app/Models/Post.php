@@ -43,14 +43,7 @@ class Post extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    //Relationships/Association
-    protected $returnTypeRelations = 'array';
-    protected $belongsTo =[
-        'author' => [
-            'model' => 'App\Models\Author',
-            'foreign_key' => 'author_id',
-            'local_key' => 'id'
-        ],
-    ];
+   
+   
     
 }

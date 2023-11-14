@@ -7,6 +7,8 @@ use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\Shield\Config\AuthGroups;
 use CodeIgniter\Shield\Entities\UserIdentity;
 use CodeIgniter\Shield\Models\UserModel;
+use Exception;
+use PhpParser\Node\Stmt\TryCatch;
 
 class UserController extends ResourceController
 {
@@ -34,9 +36,11 @@ class UserController extends ResourceController
     {
         $db = \Config\Database::connect();
         $builder = $db->table('auth_identities as identities');
-        $builder->select('identities.user_id, identities.name, identities.secret ')
-            ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")->where("entities.user_id", $id)
-            ->get();
+        $data = $builder->select('identities.user_id, identities.name, identities.secret as email, groups.group as group ')
+            ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")->where("identities.user_id", $id)
+            ->get()
+            ->getFirstRow();
+        return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($data);
     }
 
     /**
@@ -123,6 +127,31 @@ class UserController extends ResourceController
     public function update($id = null)
     {
         //
+        $db = \Config\Database::connect();
+        $builder = $db->table('auth_groups_users');
+        $data = $this->request->getJSON();
+        unset($data->id);
+        unset($data->name);
+        unset($data->email);
+
+
+        try {
+            $builder->where('user_id', $id)->update($data);
+            $response = array(
+                'status' => 'success',
+                'error' => false,
+                'messages' => 'User role updated successfully'
+            );
+
+            return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
+        } catch (Exception $e) {
+            $response = array(
+                'status' => 'error',
+                'error' => true,
+                'messages' => "Error updating role."
+            );
+            return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST)->setJSON($response);
+        }
     }
 
     /**
