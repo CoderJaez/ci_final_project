@@ -122,7 +122,7 @@
                             $(document).Toasts('create', {
                                 class: 'bg-success',
                                 title: 'Success',
-                                subtitle: 'Author',
+                                subtitle: 'User',
                                 body: 'Record successfully added.',
                                 autohide: true,
                                 delay: 3000
@@ -135,7 +135,7 @@
                             $(document).Toasts('create', {
                                 class: 'bg-danger',
                                 title: 'Error',
-                                subtitle: 'Author',
+                                subtitle: 'User',
                                 body: 'Record not added.',
                                 autohide: true,
                                 delay: 3000
@@ -151,7 +151,7 @@
                             $(document).Toasts('create', {
                                 class: 'bg-success',
                                 title: 'Success',
-                                subtitle: 'Author',
+                                subtitle: 'User',
                                 body: 'Record successfully udpated.',
                                 autohide: true,
                                 delay: 3000
@@ -165,7 +165,7 @@
                             $(document).Toasts('create', {
                                 class: 'bg-danger',
                                 title: 'Error',
-                                subtitle: 'Author',
+                                subtitle: 'User',
                                 body: 'Record not updated.',
                                 autohide: true,
                                 delay: 3000
@@ -235,7 +235,7 @@
                 $(document).Toasts('create', {
                     class: 'bg-danger',
                     title: 'Error',
-                    subtitle: 'Author',
+                    subtitle: 'User',
                     body: 'Record not found.',
                     autohide: true,
                     delay: 3000
@@ -254,10 +254,11 @@
                 url: "<?= base_url('users'); ?>/" + id,
                 type: "DELETE",
                 success: function(data) {
+                    console.log(data)
                     $(document).Toasts('create', {
                         class: 'bg-success',
                         title: 'Success',
-                        subtitle: 'Author',
+                        subtitle: 'User',
                         body: 'Record was deleted.',
                         autohide: true,
                         delay: 3000
@@ -268,7 +269,7 @@
                     $(document).Toasts('create', {
                         class: 'bg-danger',
                         title: 'Error',
-                        subtitle: 'Author',
+                        subtitle: 'User',
                         body: 'Record not found.',
                         autohide: true,
                         delay: 3000

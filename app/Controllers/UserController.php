@@ -165,5 +165,24 @@ class UserController extends ResourceController
     public function delete($id = null)
     {
         //
+        $db = \Config\Database::connect();
+        $builder = $db->table('users');
+        if ($builder->delete(['id' => $id])) {
+            $response = array(
+                'status' => 'success',
+                'error' => false,
+                'messages' => 'User deleted successfully'
+            );
+
+            return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
+        }
+
+        $response = array(
+            'status' => 'error',
+            'error' => true,
+            'messages' => 'User not found'
+        );
+
+        return $this->response->setStatusCode(Response::HTTP_NOT_FOUND)->setJSON($response);
     }
 }
