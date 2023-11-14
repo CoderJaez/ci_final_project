@@ -3,24 +3,29 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\TicketModel;
 
 class DashboardController extends BaseController
 {
     public function index()
     {
-        $author = new \App\Models\Author;
-        $post = new \App\Models\Post;
 
-        $data['totalauthors'] = $author->countAll();
-        $data['totalposts'] = $post->countAll();
+        $ticket = new TicketModel();
 
-        $data['barchartdata'] = $author->select("CONCAT(authors.first_name, ' ', authors.last_name) as author_name,
-        COUNT(posts.id) as post_count")
-        ->join('posts', 'posts.author_id = authors.id')
-        ->groupBy('authors.id')
-        ->findAll();
+        $pending = $ticket->where("status", "PENDING")->countAllResults();
+        $processing = $ticket->where("status", "PROCESSING")->countAllResults();
+        $resolved = $ticket->where("status", "RESOLVED")->countAllResults();
+        $tickets = $ticket->countAll();
+
+        $data = array(
+            'pending' => $pending,
+            'processing' => $processing,
+            'resolved' => $resolved,
+            'tickets' => $tickets
+        );
 
 
-        return view('dashboard',$data);
+
+        return view('dashboard', $data);
     }
 }

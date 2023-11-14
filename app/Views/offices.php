@@ -56,7 +56,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Office Name" required>
+                                    <input <?= auth()->user()->inGroup("admin") ?? "readonly" ?> type="text" class="form-control" id="name" name="name" placeholder="Enter Office Name" required>
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>

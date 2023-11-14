@@ -87,6 +87,10 @@ class TicketController extends ResourceController
                 "office" => $record['office'],
                 "description" => $record['description'],
                 "severity" => $record['severity'],
+                "action" => ((auth()->user()->inGroup('user') && strtoupper($record["status"]) == "PROCESSING") || strtoupper($record["status"]) == "RESOLVED") ? '<td> NO ACTION REQUIRED</td>' : '<td>
+            <button class="btn btn-warning btn-sm" id="editRow">Edit</button>
+            <button class="btn btn-danger btn-sm" id="deleteRow">Delete</button>
+            </td>',
             );
         }
 

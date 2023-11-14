@@ -14,111 +14,69 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-6 col-6">
+            <div class="col-lg-3 col-3">
                 <!-- small box -->
                 <div class="small-box bg-info">
                     <div class="inner">
-                        <h3><?= $totalauthors ?></h3>
+                        <h3><?= $tickets ?></h3>
 
-                        <p>Total Authors</p>
+                        <p>Total tickets</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-person"></i>
+                        <i class="fas fa-headphones"></i>
                     </div>
 
                 </div>
             </div>
             <!-- ./col -->
-            <div class="col-lg-6 col-6">
+            <div class="col-lg-3 col-3">
                 <!-- small box -->
-                <div class="small-box bg-success">
+                <div class="small-box bg-warning">
                     <div class="inner">
-                        <h3><?= $totalposts ?></h3>
+                        <h3><?= $pending ?></h3>
 
-                        <p>Total Posts</p>
+                        <p>Total Pending</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-ios-list"></i>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">Blog Stats</h3>
 
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+            <div class="col-lg-3 col-3">
+                <!-- small box -->
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3><?= $processing ?></h3>
+
+                        <p>Total Processing</p>
                     </div>
-                    <div class="card-body">
-                        <div class="chart">
-                            <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                        </div>
+                    <div class="icon">
+                        <i class="fas fa-cogs"></i>
                     </div>
-                    <!-- /.card-body -->
+
+                </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-3">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3><?= $resolved ?></h3>
+
+                        <p>Total Resolved</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-check"></i>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+
+        </div>
+
     </div>
 </section>
 
-<?= $this->endSection(); ?>
-
-<?= $this->section('pagescripts'); ?>
-<script>
-    $(function(){
-        var barChartCanvas = $('#barChart').get(0).getContext('2d');
-        var barchartdata = <?= json_encode($barchartdata) ?>;
-        
-        var authors =[];
-        for (var i = 0; i < barchartdata.length; i++) {
-            authors[i] = barchartdata[i].author_name;
-        }
-
-        var post_count = [];
-        for (var i = 0; i < barchartdata.length; i++) {
-            post_count[i] = parseInt(barchartdata[i].post_count);
-        }
-
-        var barChartData = {
-            labels: authors,
-            datasets: [{
-                label: 'Posts',
-                backgroundColor: '#00a65a',
-                borderColor: '#00a65a',
-                borderWidth: 1,
-                data: post_count
-            }]
-        }
-
-        var barChartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            datasetFill: false,
-            scales: {
-                yAxes:[{
-                    ticks:{
-                        stepSize: 1,
-                        beginAtZero : true
-                    }
-                }]
-            }
-        }
-
-        new Chart(barChartCanvas, {
-            type: 'bar',
-            data: barChartData,
-            options: barChartOptions
-        })
-
-    })
-</script>
 <?= $this->endSection(); ?>

@@ -100,7 +100,7 @@
                                 <?php endif; ?>
                                 <div class="form-group">
                                     <label for="name">Office/Section/Division</label>
-                                    <select name="office_id" id="office_id" class="form-control" required>
+                                    <select <?= auth()->user()->inGroup("admin") ? "disabled" : null ?> name="office_id" id="office_id" class="form-control" required>
                                         <?php foreach ($offices as $office) : ?>
                                             <option value="<?= $office->id ?>"><?= $office->name ?></option>
                                         <?php endforeach; ?>
@@ -115,7 +115,7 @@
 
                                 <div class="form-group">
                                     <label for="name">Severity</label>
-                                    <select name="severity_id" id="severity_id" class="form-control" required>
+                                    <select <?= auth()->user()->inGroup("admin") ? "disabled" : null ?> name="severity_id" id="severity_id" class="form-control" required>
                                         <?php foreach ($severities as $severity) : ?>
                                             <option value="<?= $severity->id ?>"><?= $severity->name ?></option>
                                         <?php endforeach; ?>
@@ -130,7 +130,7 @@
 
                                 <div class="form-group">
                                     <label for="code">Description</label>
-                                    <textarea class="form-control" name="description" id="description" cols="30" rows="5" required></textarea>
+                                    <textarea <?= auth()->user()->inGroup("admin") ? "disabled" : null ?> class="form-control" name="description" id="description" cols="30" rows="5" required></textarea>
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>
@@ -260,14 +260,13 @@
             },
             {
                 data: 'description',
+
             },
             {
-                data: '',
-                defaultContent: `<td>
-            <button class="btn btn-warning btn-sm" id="editRow">Edit</button>
-            <button class="btn btn-danger btn-sm" id="deleteRow">Delete</button>
-            </td>`
-            }
+                data: 'action',
+
+            },
+
         ],
         paging: true,
         lengthChange: true,
@@ -292,7 +291,7 @@
                 $("#id").val(data.id);
                 $("#severity_id").val(data.severity_id);
                 $("#office_id").val(data.office_id);
-                $("#description").val(data.description);
+                $("#description").text(data.description);
             },
             error: function(result) {
                 $(document).Toasts('create', {

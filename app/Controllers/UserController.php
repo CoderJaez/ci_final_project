@@ -2,7 +2,11 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\HTTP\Response;
 use CodeIgniter\RESTful\ResourceController;
+use CodeIgniter\Shield\Config\AuthGroups;
+use CodeIgniter\Shield\Entities\UserIdentity;
+use CodeIgniter\Shield\Models\UserModel;
 
 class UserController extends ResourceController
 {
@@ -14,8 +18,11 @@ class UserController extends ResourceController
     public function index()
     {
         //
-
-        return view("users");
+        $groups = new AuthGroups();
+        $data = array(
+            'groups' => $groups
+        );
+        return view("users", $data);
     }
 
     /**
@@ -25,7 +32,11 @@ class UserController extends ResourceController
      */
     public function show($id = null)
     {
-        //
+        $db = \Config\Database::connect();
+        $builder = $db->table('auth_identities as identities');
+        $builder->select('identities.user_id, identities.name, identities.secret ')
+            ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")->where("entities.user_id", $id)
+            ->get();
     }
 
     /**
@@ -33,11 +44,57 @@ class UserController extends ResourceController
      *
      * @return mixed
      */
-    public function new()
-    {
-        //
-    }
 
+    public function list()
+    {
+        $postData = $this->request->getPost();
+
+        $draw = $postData['draw'];
+        $start = $postData['start'];
+        $rowperpage = $postData['length']; // Rows display per page
+        $searchValue = $postData['search']['value'];
+        $sortby = $postData['order'][0]['column']; // Column index
+        $sortdir = $postData['order'][0]['dir']; // asc or desc
+        $sortcolumn = $postData['columns'][$sortby]['data']; // Column name 
+
+        $db = \Config\Database::connect();
+        $builder = $db->table('auth_identities as identities');
+
+        $totalRecords = $builder->select('id')->countAllResults();
+
+        $totalRecordswithFilter = $builder->select('identities.user_id, identities.name, identities.secret ')
+            ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")
+            ->orLike('name', $searchValue)
+            ->orLike('identities.secret', $searchValue)
+            ->orderBy($sortcolumn, $sortdir)
+            ->countAllResults();
+
+        $records = $builder->select('identities.user_id, identities.name, identities.secret,groups.group')
+            ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")
+            ->orLike('name', $searchValue)
+            ->orLike('identities.secret', $searchValue)
+            ->orderBy($sortcolumn, $sortdir)
+            ->get($rowperpage, $start);
+
+        $data = array();
+        foreach ($records->getResultObject() as $record) {
+            $data[] = array(
+                "user_id" => $record->user_id,
+                "name" => $record->name,
+                "email" => $record->secret,
+                "role" => $record->group
+            );
+        }
+
+        $response = array(
+            "draw" => intval($draw),
+            "recordsTotal" => $totalRecords,
+            "recordsFiltered" => $totalRecordswithFilter,
+            "data" => $data
+        );
+
+        return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($response);
+    }
     /**
      * Create a new resource object, from "posted" parameters
      *

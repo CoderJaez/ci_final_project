@@ -80,12 +80,6 @@
                              <p>User Management</p>
                          </a>
                      </li>
-                     <li class="nav-item">
-                         <a href="<?= base_url() ?>permissions" class="nav-link">
-                             <i class="fas fa-list nav-icon"></i>
-                             <p>Role Management</p>
-                         </a>
-                     </li>
                  <?php endif; ?>
 
 

@@ -252,7 +252,7 @@
                 <?php
                 if (auth()->loggedIn()) {
                 ?>
-                    <li class="menu-item hidden"><a href="dashboard">View Dashboard</a></li>
+                    <li class="menu-item hidden"><a href="<?= auth()->user()->inGroup("admin") ? base_url("dashboard") : base_url('tickets') ?>">Dashboard</a></li>
                     <li class="menu-item hidden"><a href="logout">Logout</a></li>
                 <?php
                 } else {

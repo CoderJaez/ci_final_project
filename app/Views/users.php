@@ -13,19 +13,20 @@
 
 <section class="content">
     <div class="container-fluid">
-        <div class="row mb-2">
+        <!-- <div class="row mb-2">
             <div class="col-sm-12">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalID">
                     Add User
                 </button>
             </div>
-        </div>
+        </div> -->
         <table id="dataTable" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>User ID</th>
-                    <th>Username</th>
+                    <th>Name</th>
                     <th>Email</th>
+                    <th>Role</th>
                     <th>ACTION</th>
                 </tr>
             </thead>
@@ -119,7 +120,7 @@
             if (this.checkValidity()) {
                 if (!formdata.id) {
                     $.ajax({
-                        url: "<?= base_url('authors'); ?>",
+                        url: "<?= base_url('users'); ?>",
                         type: "POST",
                         data: jsondata,
                         success: function(data) {
@@ -148,7 +149,7 @@
                     });
                 } else {
                     $.ajax({
-                        url: "<?= base_url('authors'); ?>/" + formdata.id,
+                        url: "<?= base_url('users'); ?>/" + formdata.id,
                         type: "PUT",
                         data: jsondata,
                         success: function(data) {
@@ -186,28 +187,26 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "<?= base_url('authors/list'); ?>",
+            url: "<?= base_url('users/list'); ?>",
             type: "POST"
         },
         columns: [{
-                data: "id",
+                data: "user_id",
             },
             {
-                data: 'last_name',
+                data: 'name',
             },
-            {
-                data: 'first_name',
-            },
+
             {
                 data: 'email',
             },
             {
-                data: 'birthdate',
+                data: 'role',
             },
             {
                 data: '',
                 defaultContent: `<td>
-            <button class="btn btn-warning btn-sm" id="editRow">Edit</button>
+            <button class="btn btn-warning btn-sm" id="editRow">Edit role</button>
             <button class="btn btn-danger btn-sm" id="deleteRow">Delete</button>
             </td>`
             }
@@ -227,7 +226,7 @@
         let id = table.row(row).data().id;
 
         $.ajax({
-            url: "<?= base_url('authors'); ?>/" + id,
+            url: "<?= base_url('users'); ?>/" + id,
             type: "GET",
             success: function(data) {
                 $("#modalID").modal("show");
@@ -256,7 +255,7 @@
 
         if (confirm("Are you sure you want to delete this record?")) {
             $.ajax({
-                url: "<?= base_url('authors'); ?>/" + id,
+                url: "<?= base_url('users'); ?>/" + id,
                 type: "DELETE",
                 success: function(data) {
                     $(document).Toasts('create', {
