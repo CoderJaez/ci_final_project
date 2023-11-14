@@ -36,8 +36,9 @@ class UserController extends ResourceController
     {
         $db = \Config\Database::connect();
         $builder = $db->table('auth_identities as identities');
-        $data = $builder->select('identities.user_id, identities.name, identities.secret as email, groups.group as group ')
+        $data = $builder->select('identities.user_id, users.username as name, identities.secret as email, groups.group as group ')
             ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")->where("identities.user_id", $id)
+            ->join("users", "users.id = identities.user_id")
             ->get()
             ->getFirstRow();
         return $this->response->setStatusCode(Response::HTTP_OK)->setJSON($data);
@@ -66,16 +67,18 @@ class UserController extends ResourceController
 
         $totalRecords = $builder->select('id')->countAllResults();
 
-        $totalRecordswithFilter = $builder->select('identities.user_id, identities.name, identities.secret ')
+        $totalRecordswithFilter = $builder->select('identities.user_id,  identities.secret ')
             ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")
-            ->orLike('name', $searchValue)
+            ->join("users", "users.id = identities.user_id")
+            ->orLike('users.username', $searchValue)
             ->orLike('identities.secret', $searchValue)
             ->orderBy($sortcolumn, $sortdir)
             ->countAllResults();
 
-        $records = $builder->select('identities.user_id, identities.name, identities.secret,groups.group')
+        $records = $builder->select('identities.user_id, users.username as name, identities.secret,groups.group')
             ->join("auth_groups_users as groups", "groups.user_id = identities.user_id")
-            ->orLike('name', $searchValue)
+            ->join("users", "users.id = identities.user_id")
+            ->orLike('users.username', $searchValue)
             ->orLike('identities.secret', $searchValue)
             ->orderBy($sortcolumn, $sortdir)
             ->get($rowperpage, $start);
