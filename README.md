@@ -70,3 +70,7 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 
 -email: admin@admin.com
 -password: dict2023
+
+## Database setup
+
+-Create a database name ciproj
